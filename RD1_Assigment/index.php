@@ -2,6 +2,14 @@
 session_start();
 $_SESSION["city"]=$_POST["city"];
 //echo $_SESSION["city"];
+
+header("Content-type: text/html; charset=utf-8");
+require ("config.php");
+     
+$link = mysqli_connect ( $dbhost, $dbuser, $dbpass ) or die ( mysqli_connect_error() );
+$result = mysqli_query ( $link, "set names utf8" );
+mysqli_select_db ( $link, $dbname );
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,14 +33,18 @@ $_SESSION["city"]=$_POST["city"];
             $content = json_decode($content,false);
             foreach($content->records->location as $locate)
             {
+                $c_name=$locate->locationName;
+                
         ?>
-        <option value="<?=$locate->locationName?>"><?=$locate->locationName;}?></option>
+        <option value="<?=$c_name?>"><?=$c_name;}?></option>
     </select>
     <input type="submit" name="nowcity" value="確認" onclick="location.href='index.php'">
     <?php }else{?>
-    <input type="button" name="nowcity" value="現在天氣" onclick="location.href='weather.php?ind=1'">
-    <input type="button" name="twocity" value="未來兩天天氣" onclick="location.href='weather.php?ind=2'">
-    <input type="button" name="weekcity" value="一週天氣" onclick="location.href='weather.php?ind=3'"><br>
+        <input type="button" name="nowcity" value="現在天氣" onclick="location.href='weather.php?ind=1'">
+        <input type="button" name="twocity" value="未來兩天天氣" onclick="location.href='weather.php?ind=2'">
+        <input type="button" name="weekcity" value="一週天氣" onclick="location.href='weather.php?ind=3'">
+        <input type="button" name="hourrain" value="過去雨量" onclick="location.href='weather.php?ind=4'">
+        <input type="button" name="nowcity" value="重新選擇縣市" onclick="location.href='index.php'"><br>
     
     <?php }?>
 

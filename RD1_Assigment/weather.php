@@ -2,7 +2,7 @@
 session_start();
 $ind=$_GET['ind'];
      //echo($ind);
-$city=$_SESSION["city"];
+$nowcity=$_SESSION["city"];
 header("Content-type: text/html; charset=utf-8");
 require ("config.php");
      
@@ -23,14 +23,23 @@ mysqli_select_db ( $link, $dbname );
 <body>
     
 <?php
+        $sql3="select c_img from city where c_name='$nowcity'";
+        $result3 = mysqli_query ( $link, $sql3 )or die ("3");
+        $row=mysqli_fetch_assoc($result3);
+        $img=$row['c_img'];
+        //echo $img;
+?>
+        <img src="<?=$img?>" width="12.5%"><br>
+<?php
      if($ind==1){
 ?>
         <input type="button" name="nowcity" value="現在天氣" onclick="location.href='weather.php?ind=1'">
         <input type="button" name="twocity" value="未來兩天天氣" onclick="location.href='weather.php?ind=2'">
         <input type="button" name="weekcity" value="一週天氣" onclick="location.href='weather.php?ind=3'">
+        <input type="button" name="hourrain" value="過去雨量" onclick="location.href='weather.php?ind=4'">
         <input type="button" name="nowcity" value="重新選擇縣市" onclick="location.href='index.php'"><br>
 <?php
-        if(isset($city)){
+        if(isset($nowcity)){
             $handle = fopen("https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWB-57C07FAB-F956-4AF9-8639-492D280DA675","rb");
             $content = "";
             while (!feof($handle)) {
@@ -38,22 +47,23 @@ mysqli_select_db ( $link, $dbname );
             }
             fclose($handle);
             $content = json_decode($content,false);
-            $sql2="drop table nowcity";
-            $result2 = mysqli_query ( $link, $sql2 )or die ("2");
             
-            $sql3="CREATE TABLE `nowcity` (
-                `n_id` int(11) NOT NULL auto_increment,
-                `n_name` varchar(20) NOT NULL,
-                `n_wx` varchar(30) NOT NULL,
-                `n_pop` int(11) NOT NULL,
-                `n_minT` int(11) NOT NULL,
-                `n_maxT` int(11) NOT NULL,
-                `n_CI` varchar(50) NOT NULL,
-                `n_startTime` TIMESTAMP NOT NULL,
-                `n_endTime` TIMESTAMP NOT NULL,
-                PRIMARY KEY(n_id)
-            )";
-            $result3 = mysqli_query ( $link, $sql3 )or die ("3");
+            // $sql2="drop table nowcity";
+            // $result2 = mysqli_query ( $link, $sql2 )or die ("2");
+            
+            // $sql3="CREATE TABLE `nowcity` (
+            //     `n_id` int(11) NOT NULL auto_increment,
+            //     `n_name` varchar(20) NOT NULL,
+            //     `n_wx` varchar(30) NOT NULL,
+            //     `n_pop` int(11) NOT NULL,
+            //     `n_minT` int(11) NOT NULL,
+            //     `n_maxT` int(11) NOT NULL,
+            //     `n_CI` varchar(50) NOT NULL,
+            //     `n_startTime` DATETIME NOT NULL,
+            //     `n_endTime` DATETIME NOT NULL,
+            //       PRIMARY KEY(n_id)
+            //   )";
+            // $result3 = mysqli_query ( $link, $sql3 )or die ("3");
 
             foreach($content->records->location as $i){
                 $n_name=($i->locationName);
@@ -64,31 +74,35 @@ mysqli_select_db ( $link, $dbname );
                 $n_minT=($i->weatherElement[2]->time[0]->parameter->parameterName);
                 $n_maxT=($i->weatherElement[4]->time[0]->parameter->parameterName);
                 $n_CI=($i->weatherElement[3]->time[0]->parameter->parameterName);
-                $sql="insert into nowcity(n_name,n_startTime,n_endTime,n_minT,n_maxT,n_pop,n_wx,n_CI) values('$n_name','$n_startTime','$n_endTime','$n_minT','$n_maxT','$n_pop','$n_wx','$n_CI')";
-                $result = mysqli_query ( $link, $sql )or die ("1");
-                    if($i->locationName==$city){
+                $sql2="select n_starTtime from nowcity where n_name='$n_name'";
+                $result2 = mysqli_query ( $link, $sql2 )or die ("2");
+                if($n_name==$nowcity){
                         //var_dump($i);
-                        echo $n_name."<br>";
-                        echo $n_startTime."~".$n_endTime."<br>";
-                        echo "天氣現象：".$n_wx."<br>";
-                        echo "降雨機率：".$n_pop."(".($i->weatherElement[1]->time[0]->parameter->parameterUnit).")<br>";
-                        echo "最低溫度：".$n_minT."(".($i->weatherElement[2]->time[0]->parameter->parameterUnit).")<br>";
-                        echo "最高溫度：".$n_maxT."(".($i->weatherElement[4]->time[0]->parameter->parameterUnit).")<br>";
-                        echo "舒適度指數：".$n_CI."<br>";
-
+                    echo $nowcity."<br>";
+                    echo $n_startTime."~".$n_endTime."<br>";
+                    echo "天氣現象：".$n_wx."<br>";
+                    echo "降雨機率：".$n_pop."(".($i->weatherElement[1]->time[0]->parameter->parameterUnit).")<br>";
+                    echo "最低溫度：".$n_minT."(".($i->weatherElement[2]->time[0]->parameter->parameterUnit).")<br>";
+                    echo "最高溫度：".$n_maxT."(".($i->weatherElement[4]->time[0]->parameter->parameterUnit).")<br>";
+                    echo "舒適度指數：".$n_CI."<br>";
             
-                    }
+                }
+                if($result2!=$n_startTime){
+                    $sql="insert into nowcity(n_name,n_startTime,n_endTime,n_minT,n_maxT,n_pop,n_wx,n_CI) values('$n_name','$n_startTime','$n_endTime','$n_minT','$n_maxT','$n_pop','$n_wx','$n_CI')";
+                    $result = mysqli_query ( $link, $sql )or die ("1");
                 }
             }
         }
+    }
     if($ind==2){
 ?> 
         <input type="button" name="nowcity" value="現在天氣" onclick="location.href='weather.php?ind=1'">
         <input type="button" name="twocity" value="未來兩天天氣" onclick="location.href='weather.php?ind=2'">
         <input type="button" name="weekcity" value="一週天氣" onclick="location.href='weather.php?ind=3'">
+        <input type="button" name="hourrain" value="過去雨量" onclick="location.href='weather.php?ind=4'">
         <input type="button" name="nowcity" value="重新選擇縣市" onclick="location.href='index.php'"><br>
 <?php
-        if(isset($city)){
+        if(isset($nowcity)){
             $handle = fopen("https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-089?Authorization=CWB-57C07FAB-F956-4AF9-8639-492D280DA675","rb");
             $content = "";
             while (!feof($handle)) {
@@ -97,10 +111,39 @@ mysqli_select_db ( $link, $dbname );
             fclose($handle);
             $content = json_decode($content,false);
             //var_dump($content);
+            // $sql2="drop table ftcity";
+            // $result2 = mysqli_query ( $link, $sql2 )or die ("2");
+            
+            // $sql3="CREATE TABLE `ftcity` (
+            //     `ft_id` int(11) NOT NULL auto_increment,
+            //     `ft_name` varchar(20) NOT NULL,
+            //     `ft_show` varchar(100) NOT NULL,
+            //     `ft_startTime` DATETIME NOT NULL,
+            //     `ft_endTime` DATETIME NOT NULL,
+            //         PRIMARY KEY(ft_id)
+            //   )";
+            // $result3 = mysqli_query ( $link, $sql3 )or die ("3");
+
             foreach($content->records->locations[0]->location as $i){
-                if($i->locationName==$city){
+                for($l=0;$l<6;$l++){
+                    $ft_name=$i->locationName;
+                    $ft_startTime=($i->weatherElement[6]->time[$l]->startTime);
+                    $ft_endTime=($i->weatherElement[6]->time[$l]->endTime);
+                    $start2=($i->weatherElement[6]->time[$l]);
+                    $ft_show=$start2->elementValue[0]->value;
+                    $sql2="select ft_starTtime from ftcity where ft_name='$ft_name'";
+                    $result2 = mysqli_query ( $link, $sql2 )or die ("2");
+                    if($result2!=$ft_startTime){
+                    $sql="insert into ftcity(ft_name,ft_startTime,ft_endTime,ft_show) values('$ft_name','$ft_startTime','$ft_endTime','$ft_show')";
+                    $result = mysqli_query ( $link, $sql )or die ("1");
+                    }
+                    else{
+                        break;
+                    }
+                }
+                if($ft_name==$nowcity){
+                    echo $nowcity."<br>";
                     //var_dump($i);
-                    echo $i->locationName."<br>";
                     // $z=0;
                     // $y=0;
                     for($j=0;$j<6;$j++){
@@ -146,9 +189,10 @@ mysqli_select_db ( $link, $dbname );
         <input type="button" name="nowcity" value="現在天氣" onclick="location.href='weather.php?ind=1'">
         <input type="button" name="twocity" value="未來兩天天氣" onclick="location.href='weather.php?ind=2'">
         <input type="button" name="weekcity" value="一週天氣" onclick="location.href='weather.php?ind=3'">
+        <input type="button" name="hourrain" value="過去雨量" onclick="location.href='weather.php?ind=4'">
         <input type="button" name="nowcity" value="重新選擇縣市" onclick="location.href='index.php'"><br>
 <?php
-        if(isset($city)){
+        if(isset($nowcity)){
             $handle = fopen("https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-091?Authorization=CWB-57C07FAB-F956-4AF9-8639-492D280DA675","rb");
             $content = "";
             while (!feof($handle)) {
@@ -157,23 +201,118 @@ mysqli_select_db ( $link, $dbname );
             fclose($handle);
             $content = json_decode($content,false);
             //var_dump($content);
+
+            // $sql2="drop table fwcity";
+            // $result2 = mysqli_query ( $link, $sql2 )or die ("2");
+            
+            // $sql3="CREATE TABLE `fwcity` (
+            //     `fw_id` int(11) NOT NULL auto_increment,
+            //     `fw_name` varchar(20) NOT NULL,
+            //     `fw_show` varchar(100) NOT NULL,
+            //     `fw_startTime` DATETIME NOT NULL,
+            //     `fw_endTime` DATETIME NOT NULL,
+            //         PRIMARY KEY(fw_id)
+            //   )";
+            // $result3 = mysqli_query ( $link, $sql3 )or die ("3");
+
             foreach($content->records->locations[0]->location as $i){
-                if($i->locationName==$city){
+                for($l=0;$l<14;$l++){
+                    $fw_name=$i->locationName;
+                    //echo $fw_name;
+                    $fw_startTime=($i->weatherElement[10]->time[$l]->startTime);
+                    $fw_endTime=($i->weatherElement[10]->time[$l]->endTime);
+                    $start2=($i->weatherElement[10]->time[$l]);
+                    $fw_show=$start2->elementValue[0]->value;
+                    $sql2="select fw_starTtime from fwcity where fw_name='$fw_name'";
+                    $result2 = mysqli_query ( $link, $sql2 )or die ("2");
+                    if($result2!=$fw_startTime){
+                    $sql="insert into fwcity(fw_name,fw_startTime,fw_endTime,fw_show) values('$fw_name','$fw_startTime','$fw_endTime','$fw_show')";
+                    $result = mysqli_query ( $link, $sql )or die ("1");
+                    // $sql="insert into fwcity(fw_name,fw_startTime,fw_endTime,fw_show) values('$fw_name','$fw_startTime','$fw_endTime','$fw_show')";
+                    // $result = mysqli_query ( $link, $sql )or die ("error insert");
+                    }
+                    else{
+                        break;
+                    }
+                }
+                if($fw_name==$nowcity){
+                    echo $nowcity."<br>";
                     //var_dump($i);
-                    echo $i->locationName."<br>";
                     $z=0;
                     $y=0;
-                    for($j=0;$j<6;$j++){
+                    for($j=0;$j<14;$j++){
                         $start=($i->weatherElement[0]->time[$j]->startTime);
                         $end=($i->weatherElement[0]->time[$j]->endTime);
+                        $start1=($i->weatherElement[10]->time[$j]->elementValue[0]);
                         echo $start."~".$end."<br>";
-                        for($k=0;$k<15;$k++){
-                        if($k==10)
-                            continue;
-                        echo ($i->weatherElement[$k]->description)."：".($i->weatherElement[$k]->time[$j]->elementValue[0]->value)."(".($i->weatherElement[$k]->time[$j]->elementValue[0]->measures).")<br>";
-                        }      
+                        echo ($i->weatherElement[10]->description)."：".($start1->value)."<br>";
 ?><hr><?php
                     }
+                }
+            }
+        }
+    }
+    if($ind==4){
+?>
+        <input type="button" name="nowcity" value="現在天氣" onclick="location.href='weather.php?ind=1'">
+        <input type="button" name="twocity" value="未來兩天天氣" onclick="location.href='weather.php?ind=2'">
+        <input type="button" name="weekcity" value="一週天氣" onclick="location.href='weather.php?ind=3'">
+        <input type="button" name="hourrain" value="過去雨量" onclick="location.href='weather.php?ind=4'">
+        <input type="button" name="nowcity" value="重新選擇縣市" onclick="location.href='index.php'"><br>
+<?php
+        if(isset($nowcity)){
+            $handle = fopen("https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0002-001?Authorization=CWB-57C07FAB-F956-4AF9-8639-492D280DA675","rb");
+            $content = "";
+            while (!feof($handle)) {
+                $content .= fread($handle, 10000);
+            }
+            fclose($handle);
+            $content = json_decode($content,false);
+            //var_dump($content);
+            // $sql2="drop table rain";
+            // $result2 = mysqli_query ( $link, $sql2 )or die ("2");
+            
+            // $sql3="CREATE TABLE `rain` (
+            //     `r_id` int(11) NOT NULL auto_increment,
+            //     `r_name` varchar(20) NOT NULL,
+            //     `r_town` varchar(20) NOT NULL,
+            //     `r_city` varchar(20) NOT NULL,
+            //     `hr_data` int(11) NOT NULL,
+            //     `day_data` int(11) NOT NULL,
+            //     `r_time` DATETIME NOT NULL,
+            //         PRIMARY KEY(r_id)
+            //   )";
+            // $result3 = mysqli_query ( $link, $sql3 )or die ("3");
+            foreach($content->records->location as $i){
+                $r_city=$i->parameter[0]->parameterValue;
+                //echo $hr_city;
+                $r_time=$i->time->obsTime;
+                $r_town=$i->parameter[2]->parameterValue;
+                $r_name=$i->locationName;
+                $hr_data=$i->weatherElement[1]->elementValue;
+                $day_data=$i->weatherElement[6]->elementValue;
+                $sql2="select r_time from rain where r_name='$r_name'";
+                    $result2 = mysqli_query ( $link, $sql2 )or die ("2");
+                if($result2!=$r_time){
+                    // $sql="insert into fwcity(fw_name,fw_startTime,fw_endTime,fw_show) values('$fw_name','$fw_startTime','$fw_endTime','$fw_show')";
+                    // $result = mysqli_query ( $link, $sql )or die ("1");
+                $sql="insert into rain(r_city,r_name,r_town,r_time,hr_data,day_data) values('$r_city','$r_name','$r_town','$r_time','$hr_data','$day_data')";
+                $result = mysqli_query ( $link, $sql )or die ("error insert");
+                }
+                else{
+                    break;
+                }
+                echo $nowcity."<br>";
+                if($r_city==$nowcity){
+                    //var_dump($i);
+                    echo "城鎮：".$r_town."<br>";
+                    echo "地區：".$r_name."<br>";
+                    echo "時間：".$r_time."<br>";
+                    echo "過去1個小時雨量：".$hr_data."<br>";
+                    echo "過去24個小時雨量：".$day_data."<br>";
+
+
+?><hr><?php
                 }
             }
         }

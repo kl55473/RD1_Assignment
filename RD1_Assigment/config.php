@@ -2,7 +2,7 @@
 	
 	$dbhost = 'localhost';
 	$dbuser = 'root';
-	$dbpass = '';
-	$dbname = 'forecst';
+	$dbpass = 'root';
+	$dbname = 'forecast';
 
 ?>
