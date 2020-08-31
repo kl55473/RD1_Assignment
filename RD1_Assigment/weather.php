@@ -17,7 +17,12 @@ mysqli_select_db ( $link, $dbname );
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <link rel=stylesheet type="text/css" href="style.css">
     <title>Document</title>
 </head>
 <body>
@@ -30,14 +35,19 @@ mysqli_select_db ( $link, $dbname );
         //echo $img;
 ?>
         <img src="<?=$img?>" width="12.5%"><br>
+        <div id="nowcity"><?=$nowcity?></div><br>
+        <div id="choose">
+            <input class="button" type="button" name="nowcity" value="現在天氣" onclick="location.href='weather.php?ind=1'">
+            <input class="button" type="button" name="twocity" value="未來２天天氣" onclick="location.href='weather.php?ind=2'">
+            <input class="button" type="button" name="weekcity" value="未來１週天氣" onclick="location.href='weather.php?ind=3'">
+            <input class="button" type="button" name="hourrain" value="過去雨量" onclick="location.href='weather.php?ind=4'">
+            <input class="button" type="button" name="nowcity" value="重新選擇縣市" onclick="location.href='index.php'">
+        </div>
+        <br>
 <?php
      if($ind==1){
 ?>
-        <input type="button" name="nowcity" value="現在天氣" onclick="location.href='weather.php?ind=1'">
-        <input type="button" name="twocity" value="未來兩天天氣" onclick="location.href='weather.php?ind=2'">
-        <input type="button" name="weekcity" value="一週天氣" onclick="location.href='weather.php?ind=3'">
-        <input type="button" name="hourrain" value="過去雨量" onclick="location.href='weather.php?ind=4'">
-        <input type="button" name="nowcity" value="重新選擇縣市" onclick="location.href='index.php'"><br>
+    <div id='text'>現在天氣</div>
 <?php
         if(isset($nowcity)){
             $handle = fopen("https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWB-57C07FAB-F956-4AF9-8639-492D280DA675","rb");
@@ -78,13 +88,14 @@ mysqli_select_db ( $link, $dbname );
                 $result2 = mysqli_query ( $link, $sql2 )or die ("2");
                 if($n_name==$nowcity){
                         //var_dump($i);
-                    echo $nowcity."<br>";
+                    ?><div id="nowc"><?php
                     echo $n_startTime."~".$n_endTime."<br>";
                     echo "天氣現象：".$n_wx."<br>";
                     echo "降雨機率：".$n_pop."(".($i->weatherElement[1]->time[0]->parameter->parameterUnit).")<br>";
                     echo "最低溫度：".$n_minT."(".($i->weatherElement[2]->time[0]->parameter->parameterUnit).")<br>";
                     echo "最高溫度：".$n_maxT."(".($i->weatherElement[4]->time[0]->parameter->parameterUnit).")<br>";
                     echo "舒適度指數：".$n_CI."<br>";
+                    ?></div><?php
             
                 }
                 if($result2!=$n_startTime){
@@ -95,12 +106,8 @@ mysqli_select_db ( $link, $dbname );
         }
     }
     if($ind==2){
-?> 
-        <input type="button" name="nowcity" value="現在天氣" onclick="location.href='weather.php?ind=1'">
-        <input type="button" name="twocity" value="未來兩天天氣" onclick="location.href='weather.php?ind=2'">
-        <input type="button" name="weekcity" value="一週天氣" onclick="location.href='weather.php?ind=3'">
-        <input type="button" name="hourrain" value="過去雨量" onclick="location.href='weather.php?ind=4'">
-        <input type="button" name="nowcity" value="重新選擇縣市" onclick="location.href='index.php'"><br>
+?>
+    <div id='text'>未來２天天氣</div>
 <?php
         if(isset($nowcity)){
             $handle = fopen("https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-089?Authorization=CWB-57C07FAB-F956-4AF9-8639-492D280DA675","rb");
@@ -148,7 +155,6 @@ mysqli_select_db ( $link, $dbname );
                     }
                 }
                 if($ft_name==$nowcity){
-                    echo $nowcity."<br>";
                     //var_dump($i);
                     // $z=0;
                     // $y=0;
@@ -192,11 +198,7 @@ mysqli_select_db ( $link, $dbname );
     }
     if($ind==3){
 ?>
-        <input type="button" name="nowcity" value="現在天氣" onclick="location.href='weather.php?ind=1'">
-        <input type="button" name="twocity" value="未來兩天天氣" onclick="location.href='weather.php?ind=2'">
-        <input type="button" name="weekcity" value="一週天氣" onclick="location.href='weather.php?ind=3'">
-        <input type="button" name="hourrain" value="過去雨量" onclick="location.href='weather.php?ind=4'">
-        <input type="button" name="nowcity" value="重新選擇縣市" onclick="location.href='index.php'"><br>
+    <div id='text'>未來１週天氣</div>
 <?php
         if(isset($nowcity)){
             $handle = fopen("https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-091?Authorization=CWB-57C07FAB-F956-4AF9-8639-492D280DA675","rb");
@@ -248,7 +250,6 @@ mysqli_select_db ( $link, $dbname );
                     }
                 }
                 if($fw_name==$nowcity){
-                    echo $nowcity."<br>";
                     //var_dump($i);
                     $z=0;
                     $y=0;
@@ -256,7 +257,7 @@ mysqli_select_db ( $link, $dbname );
                         $start=($i->weatherElement[0]->time[$j]->startTime);
                         $end=($i->weatherElement[0]->time[$j]->endTime);
                         $start1=($i->weatherElement[10]->time[$j]->elementValue[0]);
-                        echo $start."~".$end."<br>";
+                        echo $start."~".$end."<br><br>";
                         echo ($i->weatherElement[10]->description)."：".($start1->value)."<br>";
 ?><hr><?php
                     }
@@ -266,12 +267,9 @@ mysqli_select_db ( $link, $dbname );
     }
     if($ind==4){
 ?>
-        <input type="button" name="nowcity" value="現在天氣" onclick="location.href='weather.php?ind=1'">
-        <input type="button" name="twocity" value="未來兩天天氣" onclick="location.href='weather.php?ind=2'">
-        <input type="button" name="weekcity" value="一週天氣" onclick="location.href='weather.php?ind=3'">
-        <input type="button" name="hourrain" value="過去雨量" onclick="location.href='weather.php?ind=4'">
-        <input type="button" name="nowcity" value="重新選擇縣市" onclick="location.href='index.php'"><br>
+        <div id='text'>過去雨量</div><br>
 <?php
+        
         if(isset($nowcity)){
             $handle = fopen("https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0002-001?Authorization=CWB-57C07FAB-F956-4AF9-8639-492D280DA675","rb");
             $content = "";
@@ -295,7 +293,6 @@ mysqli_select_db ( $link, $dbname );
             //         PRIMARY KEY(r_id)
             //   )";
             // $result3 = mysqli_query ( $link, $sql3 )or die ("3");
-            echo $nowcity."<br>";
             $a=0;
             foreach($content->records->location as $i){
                 $r_city=$i->parameter[0]->parameterValue;
@@ -324,14 +321,18 @@ mysqli_select_db ( $link, $dbname );
                 }
                 if($r_city==$nowcity){
                     //var_dump($i);
+                    ?>
+                    <div class="col-xs-3">
+                    <?php
                     echo "城鎮：".$r_town."<br>";
                     echo "地區：".$r_name."<br>";
                     echo "時間：".$r_time."<br>";
                     echo "過去1個小時雨量：".$hr_data."<br>";
                     echo "過去24個小時雨量：".$day_data."<br>";
-
-
-?><hr><?php
+                    ?>
+                    <hr>
+                    </div>
+<?php
                 }
             }
         }
