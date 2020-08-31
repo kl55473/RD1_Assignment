@@ -123,7 +123,7 @@ mysqli_select_db ( $link, $dbname );
             //         PRIMARY KEY(ft_id)
             //   )";
             // $result3 = mysqli_query ( $link, $sql3 )or die ("3");
-
+            $a=0;
             foreach($content->records->locations[0]->location as $i){
                 for($l=0;$l<6;$l++){
                     $ft_name=$i->locationName;
@@ -131,14 +131,20 @@ mysqli_select_db ( $link, $dbname );
                     $ft_endTime=($i->weatherElement[6]->time[$l]->endTime);
                     $start2=($i->weatherElement[6]->time[$l]);
                     $ft_show=$start2->elementValue[0]->value;
-                    $sql2="select ft_starTtime from ftcity where ft_name='$ft_name'";
-                    $result2 = mysqli_query ( $link, $sql2 )or die ("2");
-                    if($result2!=$ft_startTime){
-                    $sql="insert into ftcity(ft_name,ft_startTime,ft_endTime,ft_show) values('$ft_name','$ft_startTime','$ft_endTime','$ft_show')";
-                    $result = mysqli_query ( $link, $sql )or die ("1");
+                    if($a==0){
+                        $sql2="select ft_starTtime from ftcity where ft_name='$ft_name'";
+                        $result2 = mysqli_query ( $link, $sql2 )or die ("2");
+                        $row = mysqli_fetch_assoc($result2);
+                        if(strtotime($row['ft_starTtime'])==strtotime($ft_startTime)){
+                            $a=1;
+                        }
+                        else{
+                            $a=2;
+                        }
                     }
-                    else{
-                        break;
+                    if($a==2){
+                        $sql="insert into ftcity(ft_name,ft_startTime,ft_endTime,ft_show) values('$ft_name','$ft_startTime','$ft_endTime','$ft_show')";
+                        $result = mysqli_query ( $link, $sql )or die ("1");
                     }
                 }
                 if($ft_name==$nowcity){
@@ -214,7 +220,7 @@ mysqli_select_db ( $link, $dbname );
             //         PRIMARY KEY(fw_id)
             //   )";
             // $result3 = mysqli_query ( $link, $sql3 )or die ("3");
-
+            $a=0;
             foreach($content->records->locations[0]->location as $i){
                 for($l=0;$l<14;$l++){
                     $fw_name=$i->locationName;
@@ -223,16 +229,22 @@ mysqli_select_db ( $link, $dbname );
                     $fw_endTime=($i->weatherElement[10]->time[$l]->endTime);
                     $start2=($i->weatherElement[10]->time[$l]);
                     $fw_show=$start2->elementValue[0]->value;
-                    $sql2="select fw_starTtime from fwcity where fw_name='$fw_name'";
-                    $result2 = mysqli_query ( $link, $sql2 )or die ("2");
-                    if($result2!=$fw_startTime){
-                    $sql="insert into fwcity(fw_name,fw_startTime,fw_endTime,fw_show) values('$fw_name','$fw_startTime','$fw_endTime','$fw_show')";
-                    $result = mysqli_query ( $link, $sql )or die ("1");
+                    if($a=0){
+                        $sql2="select fw_starTtime from fwcity where fw_name='$fw_name'";
+                        $result2 = mysqli_query ( $link, $sql2 )or die ("2");
+                        $row = mysqli_fetch_assoc($result2);
+                        if(strtotime($row['fw_starTtime'])==strtotime($fw_startTime)){
+                            $a=1;
                     // $sql="insert into fwcity(fw_name,fw_startTime,fw_endTime,fw_show) values('$fw_name','$fw_startTime','$fw_endTime','$fw_show')";
                     // $result = mysqli_query ( $link, $sql )or die ("error insert");
+                        }
+                        else{
+                            $a=2;
+                        }
                     }
-                    else{
-                        break;
+                    if($a==2){
+                        $sql="insert into fwcity(fw_name,fw_startTime,fw_endTime,fw_show) values('$fw_name','$fw_startTime','$fw_endTime','$fw_show')";
+                        $result = mysqli_query ( $link, $sql )or die ("1");
                     }
                 }
                 if($fw_name==$nowcity){
@@ -283,6 +295,8 @@ mysqli_select_db ( $link, $dbname );
             //         PRIMARY KEY(r_id)
             //   )";
             // $result3 = mysqli_query ( $link, $sql3 )or die ("3");
+            echo $nowcity."<br>";
+            $a=0;
             foreach($content->records->location as $i){
                 $r_city=$i->parameter[0]->parameterValue;
                 //echo $hr_city;
@@ -291,18 +305,23 @@ mysqli_select_db ( $link, $dbname );
                 $r_name=$i->locationName;
                 $hr_data=$i->weatherElement[1]->elementValue;
                 $day_data=$i->weatherElement[6]->elementValue;
-                $sql2="select r_time from rain where r_name='$r_name'";
-                    $result2 = mysqli_query ( $link, $sql2 )or die ("2");
-                if($result2!=$r_time){
+                if($a==0){
+                $sql2="select r_time from rain where (r_city='$nowcity' && r_name='$r_name')";
+                $result2 = mysqli_query ( $link, $sql2 )or die ("2");
+                $row = mysqli_fetch_assoc($result2);
+                if(strtotime($r_time)==strtotime($row['r_time'])){
+                    $a=1;
                     // $sql="insert into fwcity(fw_name,fw_startTime,fw_endTime,fw_show) values('$fw_name','$fw_startTime','$fw_endTime','$fw_show')";
                     // $result = mysqli_query ( $link, $sql )or die ("1");
-                $sql="insert into rain(r_city,r_name,r_town,r_time,hr_data,day_data) values('$r_city','$r_name','$r_town','$r_time','$hr_data','$day_data')";
-                $result = mysqli_query ( $link, $sql )or die ("error insert");
                 }
                 else{
-                    break;
+                    $a=2;
                 }
-                echo $nowcity."<br>";
+                }
+                if($a==2){
+                    $sql="insert into rain(r_city,r_name,r_town,r_time,hr_data,day_data) values('$r_city','$r_name','$r_town','$r_time','$hr_data','$day_data')";
+                    $result = mysqli_query ( $link, $sql )or die ("error insert");
+                }
                 if($r_city==$nowcity){
                     //var_dump($i);
                     echo "城鎮：".$r_town."<br>";
