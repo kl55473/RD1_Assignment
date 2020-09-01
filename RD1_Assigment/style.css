@@ -1,3 +1,5 @@
+html {
+  height: 100%; }
 img {
   display:block;
   margin:auto;
@@ -16,7 +18,7 @@ padding: 0;
 /* min-width: 500px;
 max-width: 600px; */
 width: 250px; 
-position:absolute; height:100px;
+position:absolute; height:300px;
 top:0; bottom:0; left:0; right:0;
 }
 
@@ -60,3 +62,12 @@ top:0; bottom:0; left:0; right:0;
   color: #ffffff;
   background-color: #000; /*選單背景顏色*/
  }
+
+body{
+  background-image:url('https://cdn.pixabay.com/photo/2020/01/04/12/17/blue-4740453_960_720.jpg');
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+ 

@@ -107,7 +107,7 @@ mysqli_select_db ( $link, $dbname );
     }
     if($ind==2){
 ?>
-    <div id='text'>未來２天天氣</div>
+    <div id='text'>未來２天天氣</div><br>
 <?php
         if(isset($nowcity)){
             $handle = fopen("https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-089?Authorization=CWB-57C07FAB-F956-4AF9-8639-492D280DA675","rb");
@@ -132,38 +132,46 @@ mysqli_select_db ( $link, $dbname );
             // $result3 = mysqli_query ( $link, $sql3 )or die ("3");
             $a=0;
             foreach($content->records->locations[0]->location as $i){
-                for($l=0;$l<6;$l++){
+                $start3=$ft_startTime=($i->weatherElement[6]->time[23]->startTime);
+                for($l=0;$l<24;$l++){
                     $ft_name=$i->locationName;
                     $ft_startTime=($i->weatherElement[6]->time[$l]->startTime);
                     $ft_endTime=($i->weatherElement[6]->time[$l]->endTime);
                     $start2=($i->weatherElement[6]->time[$l]);
                     $ft_show=$start2->elementValue[0]->value;
                     if($a==0){
-                        $sql2="select ft_starTtime from ftcity where ft_name='$ft_name'";
-                        $result2 = mysqli_query ( $link, $sql2 )or die ("2");
-                        $row = mysqli_fetch_assoc($result2);
-                        if(strtotime($row['ft_starTtime'])==strtotime($ft_startTime)){
-                            $a=1;
+                        $sql3="select ft_starTtime from ftcity where ft_startTime='$start3'";
+                        $result3 = mysqli_query ( $link, $sql3 )or die ("2");
+                        $row = mysqli_fetch_assoc($result3);
+                        if(strtotime($start3)!=strtotime($sql3)){
+                            $a=2;
                         }
                         else{
-                            $a=2;
+                            $a=1;
                         }
                     }
                     if($a==2){
-                        $sql="insert into ftcity(ft_name,ft_startTime,ft_endTime,ft_show) values('$ft_name','$ft_startTime','$ft_endTime','$ft_show')";
-                        $result = mysqli_query ( $link, $sql )or die ("1");
+                        $sql2="select ft_starTtime from ftcity where ft_name='$ft_name'";
+                        $result2 = mysqli_query ( $link, $sql2 )or die ("2");
+                        $row = mysqli_fetch_assoc($result2);
+                        if(strtotime($row['ft_starTtime'])!=strtotime($ft_startTime)){
+                            $sql="insert into ftcity(ft_name,ft_startTime,ft_endTime,ft_show) values('$ft_name','$ft_startTime','$ft_endTime','$ft_show')";
+                            $result = mysqli_query ( $link, $sql )or die ("1");
+                        }                        
                     }
                 }
                 if($ft_name==$nowcity){
                     //var_dump($i);
                     // $z=0;
                     // $y=0;
-                    for($j=0;$j<6;$j++){
-                        $start=($i->weatherElement[0]->time[$j]->startTime);
-                        $end=($i->weatherElement[0]->time[$j]->endTime);
+                    for($j=0;$j<24;$j++){
+                        $start=($i->weatherElement[6]->time[$j]->startTime);
+                        $end=($i->weatherElement[6]->time[$j]->endTime);
                         $start1=($i->weatherElement[6]->time[$j]);
+                        ?><div id="nowc"><?php
                         echo $start."~".$end."<br>";
                         echo ($i->weatherElement[6]->description)."：".($start1->elementValue[0]->value)."<br>";
+                        ?></div><?php
                         // while($z<24){
                         //     $com=($i->weatherElement[1]->time[$z]);
                         //     $com1=($i->weatherElement[2]->time[$z]);
@@ -198,7 +206,7 @@ mysqli_select_db ( $link, $dbname );
     }
     if($ind==3){
 ?>
-    <div id='text'>未來１週天氣</div>
+    <div id='text'>未來１週天氣</div><br>
 <?php
         if(isset($nowcity)){
             $handle = fopen("https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-091?Authorization=CWB-57C07FAB-F956-4AF9-8639-492D280DA675","rb");
@@ -224,6 +232,7 @@ mysqli_select_db ( $link, $dbname );
             // $result3 = mysqli_query ( $link, $sql3 )or die ("3");
             $a=0;
             foreach($content->records->locations[0]->location as $i){
+                $start3=$ft_startTime=($i->weatherElement[10]->time[13]->startTime);
                 for($l=0;$l<14;$l++){
                     $fw_name=$i->locationName;
                     //echo $fw_name;
@@ -231,22 +240,25 @@ mysqli_select_db ( $link, $dbname );
                     $fw_endTime=($i->weatherElement[10]->time[$l]->endTime);
                     $start2=($i->weatherElement[10]->time[$l]);
                     $fw_show=$start2->elementValue[0]->value;
-                    if($a=0){
-                        $sql2="select fw_starTtime from fwcity where fw_name='$fw_name'";
-                        $result2 = mysqli_query ( $link, $sql2 )or die ("2");
-                        $row = mysqli_fetch_assoc($result2);
-                        if(strtotime($row['fw_starTtime'])==strtotime($fw_startTime)){
-                            $a=1;
-                    // $sql="insert into fwcity(fw_name,fw_startTime,fw_endTime,fw_show) values('$fw_name','$fw_startTime','$fw_endTime','$fw_show')";
-                    // $result = mysqli_query ( $link, $sql )or die ("error insert");
+                    if($a==0){
+                        $sql3="select fw_starTtime from fwcity where fw_startTime='$start3'";
+                        $result3 = mysqli_query ( $link, $sql3 )or die ("2");
+                        $row = mysqli_fetch_assoc($result3);
+                        if(strtotime($start3)!=strtotime($sql3)){
+                            $a=2;
                         }
                         else{
-                            $a=2;
+                            $a=1;
                         }
                     }
                     if($a==2){
-                        $sql="insert into fwcity(fw_name,fw_startTime,fw_endTime,fw_show) values('$fw_name','$fw_startTime','$fw_endTime','$fw_show')";
-                        $result = mysqli_query ( $link, $sql )or die ("1");
+                        $sql2="select fw_starTtime from fwcity where fw_name='$ft_name'";
+                        $result2 = mysqli_query ( $link, $sql2 )or die ("2");
+                        $row = mysqli_fetch_assoc($result2);
+                        if(strtotime($row['fw_starTtime'])!=strtotime($fw_startTime)){
+                            $sql="insert into fwcity(fw_name,fw_startTime,fw_endTime,fw_show) values('$fw_name','$fw_startTime','$fw_endTime','$fw_show')";
+                            $result = mysqli_query ( $link, $sql )or die ("1");
+                        }                        
                     }
                 }
                 if($fw_name==$nowcity){
@@ -257,8 +269,10 @@ mysqli_select_db ( $link, $dbname );
                         $start=($i->weatherElement[0]->time[$j]->startTime);
                         $end=($i->weatherElement[0]->time[$j]->endTime);
                         $start1=($i->weatherElement[10]->time[$j]->elementValue[0]);
+                        ?><div id="nowc"><?php
                         echo $start."~".$end."<br><br>";
                         echo ($i->weatherElement[10]->description)."：".($start1->value)."<br>";
+                        ?></div><?php
 ?><hr><?php
                     }
                 }

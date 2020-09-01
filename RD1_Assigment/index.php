@@ -24,8 +24,9 @@ mysqli_select_db ( $link, $dbname );
     <link rel=stylesheet type="text/css" href="style.css">
     <title>Document</title>
 </head>
-<body>
+<body >
 <?php if(!isset($_POST['city'])){ ?>
+<div id="nowcity">台灣天氣</div>
 <div id='list'>
 <form name="form1" method="POST" action="index.php">        
 <select id="city" name="city" size="1">
