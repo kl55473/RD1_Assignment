@@ -252,7 +252,7 @@ mysqli_select_db ( $link, $dbname );
                         }
                     }
                     if($a==2){
-                        $sql2="select fw_starTtime from fwcity where fw_name='$ft_name'";
+                        $sql2="select fw_starTtime from fwcity where fw_name='$fw_name'";
                         $result2 = mysqli_query ( $link, $sql2 )or die ("2");
                         $row = mysqli_fetch_assoc($result2);
                         if(strtotime($row['fw_starTtime'])!=strtotime($fw_startTime)){
