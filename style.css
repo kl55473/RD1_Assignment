@@ -1,0 +1,74 @@
+html {
+  height: 100%; }
+img {
+  display:block;
+  margin:auto;
+}
+
+#nowcity{
+  text-align:center;
+  font-size:30px;
+  font-family: Microsoft JhengHei;
+}
+
+#list{
+  font:100% verdana,arial,sans-serif;
+margin: auto;
+padding: 0;
+/* min-width: 500px;
+max-width: 600px; */
+width: 250px; 
+position:absolute; height:300px;
+top:0; bottom:0; left:0; right:0;
+}
+
+#choose{
+  text-align: center;
+  font-family: Microsoft JhengHei;
+}
+
+#nowc{
+  text-align: center;
+  font-family: Microsoft JhengHei;
+}
+
+#text
+{
+  text-align: center;
+  font-size: 20px;
+  font-family: Microsoft JhengHei;
+}
+
+.button {
+  border-radius: 4px;
+  font-size: 12px;
+  /* background-color: #555555; */
+  background-color: white;
+    color: black;
+    border: 2px solid #555555; 
+}
+
+.button1 {
+  border-radius: 4px;
+  font-size: 20px;
+  /* background-color: #555555; */
+  background-color: white;
+    color: black;
+    border: 2px solid #555555; 
+}
+
+#city{
+  font-size: 20px; /*文字大小*/
+  columns: #555555; /*文字顏色*/
+  color: #ffffff;
+  background-color: #000; /*選單背景顏色*/
+ }
+
+body{
+  background-image:url('https://cdn.pixabay.com/photo/2020/01/04/12/17/blue-4740453_960_720.jpg');
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+ 

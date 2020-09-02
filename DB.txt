@@ -1,0 +1,55 @@
+CREATE DATABASE forecast DEFAULT CHARACTER SET utf8;
+
+USE forecast;
+
+CREATE TABLE `nowcity` (
+  `n_id` int(11) NOT NULL auto_increment,
+  `n_name` varchar(20) NOT NULL,
+  `n_wx` varchar(30) NOT NULL,
+  `n_pop` int(11) NOT NULL,
+  `n_minT` int(11) NOT NULL,
+  `n_maxT` int(11) NOT NULL,
+  `n_CI` varchar(50) NOT NULL,
+  `n_startTime` DATETIME NOT NULL,
+  `n_endTime` DATETIME NOT NULL,
+    PRIMARY KEY(n_id)
+);
+
+
+CREATE TABLE `ftcity` (
+  `ft_id` int(11) NOT NULL auto_increment,
+  `ft_name` varchar(20) NOT NULL,
+  `ft_show` varchar(100) NOT NULL,
+  `ft_startTime` DATETIME NOT NULL,
+  `ft_endTime` DATETIME NOT NULL,
+    PRIMARY KEY(ft_id)
+);
+
+
+CREATE TABLE `fwcity` (
+  `fw_id` int(11) NOT NULL auto_increment,
+  `fw_name` varchar(20) NOT NULL,
+  `fw_show` varchar(100) NOT NULL,
+  `fw_startTime` DATETIME NOT NULL,
+  `fw_endTime` DATETIME NOT NULL,
+    PRIMARY KEY(fw_id)
+);
+
+CREATE TABLE `rain` (
+  `r_id` int(11) NOT NULL auto_increment,
+  `r_name` varchar(20) NOT NULL,
+  `r_town` varchar(20) NOT NULL,
+  `r_city` varchar(20) NOT NULL,
+  `hr_data` int(11) NOT NULL,
+  `day_data` int(11) NOT NULL,
+  `r_time` DATETIME NOT NULL,
+    PRIMARY KEY(r_id)
+);
+
+CREATE TABLE `city` (
+  `c_id` int(11) NOT NULL auto_increment,
+  `c_name` varchar(20) NOT NULL,
+  `c_img` varchar(300) ,
+
+    PRIMARY KEY(c_id)
+);
